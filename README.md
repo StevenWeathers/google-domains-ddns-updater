@@ -12,3 +12,17 @@ docker build . -t gddu
 
 docker run -e DOMAINS="yourdomain.com,yoursubdomain.yourdomain.com" -e USERNAME="anonymous" -e PASSWORD="password" gddu
 ```
+
+
+hostnames.json file format
+```
+{
+    "hostnames": [
+        {
+            "domain": "google.com",
+            "username": "google",
+            "password": "elgoog"
+        }
+    ]
+}
+```

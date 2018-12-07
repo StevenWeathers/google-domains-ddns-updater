@@ -8,7 +8,7 @@ FROM golang:alpine as builder
 RUN apk update && apk add --no-cache git ca-certificates
 # Create appuser
 RUN adduser -D -g '' appuser
-COPY . $GOPATH/src/mypackage/myapp/
+COPY ./gddu.go $GOPATH/src/mypackage/myapp/
 WORKDIR $GOPATH/src/mypackage/myapp/
 # Fetch dependencies.
 # Using go mod with go 1.11
@@ -17,6 +17,9 @@ WORKDIR $GOPATH/src/mypackage/myapp/
 RUN go get -d -v
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o /go/bin/gddu
+
+# RUN mkdir /data
+# RUN touch /data/hostnames.json
 ############################
 # STEP 2 build a small image
 ############################
@@ -26,9 +29,13 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd
 # Copy our static executable
 COPY --from=builder /go/bin/gddu /go/bin/gddu
+# Copy our data directory
+# COPY --from=builder /data /data
 # Use an unprivileged user.
 USER appuser
 
 ENV CADENCE "@hourly"
+# VOLUME ["/data"]
+
 # Run the gddu binary.
 ENTRYPOINT ["/go/bin/gddu"]
