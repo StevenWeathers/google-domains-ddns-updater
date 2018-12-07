@@ -5,7 +5,7 @@ Little utility application to update GoogleDomains Dynamic DNS entries for a lis
 Provide the application your Dynamic DNS username/password, and a comma seperated list of domains.
 
 
-Running with Docker
+## Running with Docker
 
 ```
 docker build . -t gddu
@@ -14,7 +14,7 @@ docker run -v hostnames.json:/data/hostnames.json gddu
 ```
 
 
-hostnames.json file format
+## hostnames.json file format
 ```
 {
     "hostnames": [
@@ -25,4 +25,32 @@ hostnames.json file format
         }
     ]
 }
+```
+
+
+## API Endpoints (unsecured, unvalidated)
+```
+[GET]
+/hostnames
+
+[GET]
+/hostnames/domain.com
+
+[POST]
+/hostnames
+{
+    "domain": "google.com",
+    "username": "google",
+    "password": "elgoog"
+}
+
+[PUT]
+/hostnames/domain.com
+{
+    "username": "google",
+    "password": "elgoog"
+}
+
+[DELETE]
+/hostnames/domain.com
 ```
