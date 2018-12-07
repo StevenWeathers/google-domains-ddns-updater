@@ -42,9 +42,7 @@ func attemptIpAddressUpdates(hostnames Hostnames) {
     if err != nil {
         log.Println(err)
     } else {
-        for i := 0; i < len(hostnames.Hostnames); i++ {
-            var hostname = hostnames.Hostnames[i]
-            
+        for _, hostname := range hostnames.Hostnames {
             postToGoogleDns(hostname.Username, hostname.Password, hostname.Domain, ip)
         }
     }
