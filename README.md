@@ -10,7 +10,7 @@ Running with Docker
 ```
 docker build . -t gddu
 
-docker run -e DOMAINS="yourdomain.com,yoursubdomain.yourdomain.com" -e USERNAME="anonymous" -e PASSWORD="password" gddu
+docker run -v hostnames.json:/data/hostnames.json gddu
 ```
 
 
