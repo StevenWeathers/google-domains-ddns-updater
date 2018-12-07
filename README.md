@@ -1,6 +1,7 @@
 # google-domains-ddns-updater
 
 Little utility application to update GoogleDomains Dynamic DNS entries for a list of hostnames/domains.
+
 Provide the application your Dynamic DNS username/password, and a comma seperated list of domains.
 
 
