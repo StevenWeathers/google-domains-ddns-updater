@@ -25,6 +25,7 @@ type Hostname struct {
 }
 
 func postToGoogleDns(username string, password string, domain string, ip string) {
+    log.Println("Domain: ", domain)
     var endpoint string = fmt.Sprintf("https://%s:%s@domains.google.com/nic/update?hostname=%s&myip=%s", username, password, domain, ip)
     resp, err := http.Get(endpoint)
 	if err != nil {
@@ -35,7 +36,7 @@ func postToGoogleDns(username string, password string, domain string, ip string)
 	if err != nil {
 		log.Println(err)
 	}
-
+    
 	log.Println(string(body))
 }
 
