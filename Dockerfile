@@ -8,6 +8,9 @@ FROM golang:alpine as builder
 RUN apk update && apk add --no-cache git ca-certificates
 # Create appuser
 RUN adduser -D -g '' appuser
+COPY ./types.go $GOPATH/src/mypackage/myapp/
+COPY ./datasrc.go $GOPATH/src/mypackage/myapp/
+COPY ./handlers.go $GOPATH/src/mypackage/myapp/
 COPY ./gddu.go $GOPATH/src/mypackage/myapp/
 WORKDIR $GOPATH/src/mypackage/myapp/
 # Fetch dependencies.
@@ -29,12 +32,11 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /etc/passwd /etc/passwd
 # Copy our static executable
 COPY --from=builder /go/bin/gddu /go/bin/gddu
-# Copy our data directory
-# COPY --from=builder /data /data
 # Use an unprivileged user.
 USER appuser
 
 ENV CADENCE "@hourly"
+
 # VOLUME ["/data"]
 
 # Run the gddu binary.
