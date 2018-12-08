@@ -1,10 +1,11 @@
 package main
 
 import (
-    "fmt"
     "os"
-    "net/http"
+    "fmt"
     "log"
+    "time"
+    "net/http"
     "io/ioutil"
     "encoding/json"
     "github.com/rdegges/go-ipify"
@@ -74,6 +75,9 @@ func main() {
     setJsonFilePath(getEnv("JSONPATH", "/data/hostnames.json"))
     var cadence string = getEnv("CADENCE", "@hourly")
     var listenPort string = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
+    var css string = "/static/css/"
+    var js string = "/static/js/"
+    var entry string = "/static/index.html"
    
     var hostnames = getHostnamesFromJson()
 
@@ -83,11 +87,23 @@ func main() {
     c.Start()
     
     router := mux.NewRouter()
+    router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(css))))
+    router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(js))))
     router.HandleFunc("/hostnames", GetHostnames).Methods("GET")
     router.HandleFunc("/hostnames/{domain}", GetHostname).Methods("GET")
     router.HandleFunc("/hostnames", CreateHostname).Methods("POST")
     router.HandleFunc("/hostnames/{domain}", UpdateHostname).Methods("PUT")
     router.HandleFunc("/hostnames/{domain}", DeleteHostname).Methods("DELETE")
     router.HandleFunc("/triggerUpdate", TriggerUpdate).Methods("GET")
-    log.Fatal(http.ListenAndServe(listenPort, router))
+    router.PathPrefix("/").HandlerFunc(IndexHandler(entry))
+
+    srv := &http.Server{
+        Handler:      router,
+        Addr:         listenPort,
+        // Good practice: enforce timeouts for servers you create!
+        WriteTimeout: 15 * time.Second,
+        ReadTimeout:  15 * time.Second,
+    }
+
+    log.Fatal(srv.ListenAndServe())
 }
