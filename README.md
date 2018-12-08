@@ -1,9 +1,10 @@
 # google-domains-ddns-updater
 
-Little utility application to update GoogleDomains Dynamic DNS entries for a list of hostnames/domains.
+API Server to update GoogleDomains Dynamic DNS entries for a list of domains.
 
-Provide the application your Dynamic DNS username/password, and a comma seperated list of domains.
+Runs a cronlike job to make a request to google for each domain entered.
 
+Exposes APIs to manage the domains entered, as well as manually trigger the job when needed.
 
 ## Running with Docker
 
@@ -12,7 +13,6 @@ docker build . -t gddu
 
 docker run -v hostnames.json:/data/hostnames.json gddu
 ```
-
 
 ## hostnames.json file format
 ```
@@ -26,7 +26,6 @@ docker run -v hostnames.json:/data/hostnames.json gddu
     ]
 }
 ```
-
 
 ## API Endpoints (unsecured, unvalidated)
 ```
