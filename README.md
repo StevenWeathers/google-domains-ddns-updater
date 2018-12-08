@@ -1,6 +1,6 @@
 # google-domains-ddns-updater
 
-API Server to update GoogleDomains Dynamic DNS entries for a list of domains.
+API Server to update [GoogleDomains Dynamic DNS](https://support.google.com/domains/answer/6147083?hl=en) entries for a list of domains.
 
 Runs a cronlike job to make a request to google for each domain entered.
 
