@@ -10,7 +10,34 @@
           align-center
         >
           <v-flex text-xs-center>
-            TBC...
+            <ul v-if="errors && errors.length">
+              <li v-for="error of errors">
+                <v-alert
+                  :value="true"
+                  type="error"
+                >
+                  {{error.message}}
+                </v-alert>
+              </li>
+            </ul>
+            
+            <v-btn color="success">Add</v-btn>
+            <v-data-table
+              :headers="headers"
+              :items="hostnames"
+              class="elevation-1"
+              hide-actions
+            >
+              <template slot="items" slot-scope="props">
+                <td class="text-xs-left">{{ props.item.domain }}</td>
+                <td class="text-xs-left">{{ props.item.username }}</td>
+                <td class="text-xs-left">{{ props.item.password }}</td>
+                <td>
+                  <v-btn color="error">Delete</v-btn>
+                  <v-btn color="info">Edit</v-btn>
+                </td>
+              </template>
+            </v-data-table>
           </v-flex>
         </v-layout>
       </v-container>
@@ -22,12 +49,46 @@
 </template>
 
 <script>
+  import axios from 'axios';
+
   export default {
-    data: () => ({
-      drawer: null
-    }),
-    props: {
-      source: String
+    data() {
+      return {
+        headers: [
+          {
+            text: 'Domain',
+            align: 'left',
+            value: 'domain'
+          },
+          {
+            text: 'Username',
+            sortable: false,
+            align: 'left'
+          },
+          {
+            text: 'Password',
+            sortable: false,
+            align: 'left'
+          },
+          {
+            text: 'Actions',
+            sortable: false,
+            align: 'left'
+          }
+        ],
+        hostnames: [],
+        errors: []
+      }
+    },
+    created() {
+      axios.get(`/hostnames`)
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.hostnames = response.data.hostnames
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
     }
   }
 </script>
