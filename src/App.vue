@@ -4,7 +4,7 @@
       <v-toolbar-title>Google Domains DDNS Updater</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat @click="addHostname" v-show="!showAddHostname">Add Hostname</v-btn>
+        <v-btn flat @click="addHostname" v-show="!showHostnameForm">Add Hostname</v-btn>
         <v-btn flat @click="triggerJob">Trigger Job</v-btn>
       </v-toolbar-items>
     </v-toolbar>
@@ -12,8 +12,8 @@
       <v-container fluid fill-height>
         <v-layout justify-center align-center>
           <v-flex>
-            <AddHostname v-if="showAddHostname" v-on:closeAddHostname="showAddHostname = false" />
-            <HostnamesList v-else/>
+            <HostnameForm v-if="showHostnameForm" v-on:closeAddHostname="closeHostnameForm" :is-edit="isHostnameEdit" :edit-hostname="selectedHostname" />
+            <HostnamesList v-else v-on:editHostname="editHostname"/>
           </v-flex>
         </v-layout>
       </v-container>
@@ -27,29 +27,39 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
 
-import HostnamesList from "./components/HostnamesList.vue";
-import AddHostname from "./components/AddHostname.vue";
+import HostnamesList from "./components/HostnamesList.vue"
+import HostnameForm from "./components/HostnameForm.vue"
 
 export default {
   name: "app",
   data() {
     return {
-      hostname: {},
-      showAddHostname: false,
+      showHostnameForm: false,
+      isHostnameEdit: false,
+      selectedHostname: {},
     }
   },
   components: {
     HostnamesList,
-    AddHostname
+    HostnameForm
   },
    methods: {
+    closeHostnameForm() {
+      this.isHostnameEdit = false
+      this.selectedHostname = {}
+      this.showHostnameForm = false
+    },
     addHostname() {
-      this.showAddHostname = true;
+      this.isHostnameEdit = false
+      this.selectedHostname = {}
+      this.showHostnameForm = true
     },
     editHostname(hostname) {
-      this.hostname = hostname;
+      this.isHostnameEdit = true
+      this.selectedHostname = hostname
+      this.showHostnameForm = true
     },
     triggerJob() {
       axios

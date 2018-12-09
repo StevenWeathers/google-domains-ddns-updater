@@ -15,8 +15,17 @@ import axios from "axios";
 
 export default {
   name: "AddHostname",
-  props: {},
+  props: {
+    isEdit: false,
+    editHostname: {},
+  },
   data() {
+    const hostname = this.isEdit ? { ...this.editHostname } : {
+      domain: "",
+      username: "",
+      password: ""
+    };
+
     return {
       valid: true,
       domainRules: [
@@ -29,24 +38,33 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required'
       ],
-      hostname: {
-        domain: "",
-        username: "",
-        password: ""
-      },
-      errors: []
+      errors: [],
+      hostname,
     };
   },
   methods: {
       submit () {
         if (this.$refs.form.validate()) {
-          axios
-            .post('/hostnames', this.hostname)
+          const hostname = { ...this.hostname }
+          let method = 'post'
+          let endpoint = '/hostnames'
+          
+          if (this.isEdit) {
+            method = 'put'
+            endpoint = `/hostnames/${this.hostname.domain}`
+            delete hostname.domain
+          }
+
+          axios({
+            method: method,
+            url: endpoint,
+            data: hostname
+          })
             .then(response => {
-                this.$emit('closeAddHostname');
+                this.$emit('closeAddHostname')
             })
             .catch(e => {
-                this.errors.push(e);
+                this.errors.push(e)
             })
         }
       },

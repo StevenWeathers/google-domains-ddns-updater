@@ -9,7 +9,7 @@
         <td class="text-xs-left">{{ props.item.username }}</td>
         <td class="text-xs-left">{{ props.item.password }}</td>
         <td>
-          <v-btn color="info" @click="handleEdit(props.item.domain)">Edit</v-btn>
+          <v-btn color="info" @click="$emit('editHostname', props.item)">Edit</v-btn>
           <v-btn color="error" @click="handleDelete(props.item.domain)">Delete</v-btn>
         </td>
       </template>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
 
 export default {
   name: "HostnamesList",
@@ -55,25 +55,22 @@ export default {
     axios
       .get(`/hostnames`)
       .then(response => {
-        this.hostnames = response.data.hostnames;
+        this.hostnames = response.data.hostnames
       })
       .catch(e => {
-        this.errors.push(e);
+        this.errors.push(e)
       });
   },
   methods: {
-    handleEdit() {
-      // @TODO - hook this up to a form (inline or like Add)
-    },
     handleDelete(domain) {
       axios
         .delete(`/hostnames/${domain}`)
         .then(response => {
-          var hostnameIndex = this.hostnames.findIndex(hostname => hostname.domain === domain);
-          this.hostnames.splice(hostnameIndex, 1);
+          const hostnameIndex = this.hostnames.findIndex(hostname => hostname.domain === domain)
+          this.hostnames.splice(hostnameIndex, 1)
         })
         .catch(e => {
-          this.errors.push(e);
+          this.errors.push(e)
         })
     },
   }
