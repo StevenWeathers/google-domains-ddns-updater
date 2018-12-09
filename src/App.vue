@@ -4,7 +4,8 @@
       <v-toolbar-title>Google Domain DDNS Updater</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat @click="addHostname">Add Hostname</v-btn>
+        <v-btn flat @click="addHostname" v-show="!showAddHostname">Add Hostname</v-btn>
+        <v-btn flat @click="triggerJob">Trigger Job</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -26,6 +27,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 import HostnamesList from "./components/HostnamesList.vue";
 import AddHostname from "./components/AddHostname.vue";
 
@@ -47,6 +50,10 @@ export default {
     },
     editHostname(hostname) {
       this.hostname = hostname;
+    },
+    triggerJob() {
+      axios
+        .get('/triggerUpdate')
     }
   }
 };

@@ -1,10 +1,8 @@
 <template>
   <div>
-    <ul v-if="errors && errors.length">
-      <li v-for="error of errors" :key="error.message">
-        <v-alert :value="true" type="error">{{error.message}}</v-alert>
-      </li>
-    </ul>
+    <template v-if="errors && errors.length">
+      <v-alert :value="true" type="error" v-for="error of errors" :key="error.message">{{message}}</v-alert>
+    </template>
     <v-data-table :headers="headers" :items="hostnames" class="elevation-1" hide-actions>
       <template slot="items" slot-scope="props">
         <td class="text-xs-left">{{ props.item.domain }}</td>
@@ -12,7 +10,7 @@
         <td class="text-xs-left">{{ props.item.password }}</td>
         <td>
           <v-btn color="info" @click="handleEdit(props.item.domain)">Edit</v-btn>
-          <v-btn color="error" @click="handleDelete(props.item.domain, props.index)">Delete</v-btn>
+          <v-btn color="error" @click="handleDelete(props.item.domain)">Delete</v-btn>
         </td>
       </template>
     </v-data-table>
@@ -67,11 +65,12 @@ export default {
     handleEdit() {
       // @TODO - hook this up to a form (inline or like Add)
     },
-    handleDelete(domain, index) {
+    handleDelete(domain) {
       axios
         .delete(`/hostnames/${domain}`)
         .then(response => {
-          this.hostnames.splice(index, 1);
+          var hostnameIndex = this.hostnames.findIndex(hostname => hostname.domain === domain);
+          this.hostnames.splice(hostnameIndex, 1);
         })
         .catch(e => {
           this.errors.push(e);
