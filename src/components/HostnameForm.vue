@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="valid" lazy-validation>
-    <v-text-field v-model="hostname.domain" label="Domain" :rules="domainRules" required></v-text-field>
+    <v-text-field v-model="hostname.domain" label="Domain" :rules="domainRules" required :readonly="isEdit"></v-text-field>
     <v-text-field v-model="hostname.username" label="Username" :rules="usernameRules" required></v-text-field>
     <v-text-field v-model="hostname.password" label="Password" :rules="passwordRules" required></v-text-field>
 
