@@ -2,7 +2,7 @@
 
 API Server to update [GoogleDomains Dynamic DNS](https://support.google.com/domains/answer/6147083?hl=en) entries for a list of domains.
 
-Runs a cronlike job to make a request to google for each domain entered.
+Runs a cron job to make a request to google for each domain entered.
 
 Exposes APIs to manage the domains entered, as well as manually trigger the job when needed.
 
@@ -56,9 +56,10 @@ docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gdd
 
 [DELETE]
 /hostnames/domain.com
+
+[GET]
+/triggerUpdate
 ```
-
-
 
 # Development
 
@@ -93,6 +94,3 @@ npm run test
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
