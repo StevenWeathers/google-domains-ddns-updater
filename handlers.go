@@ -85,9 +85,7 @@ func DeleteHostname(w http.ResponseWriter, r *http.Request) {
 
 // @TODO - add error handling
 func TriggerUpdate(w http.ResponseWriter, r *http.Request) {
-    var hostnames = getHostnamesFromJson()
-
-    attemptIpAddressUpdates(hostnames)
+    attemptIpAddressUpdates()
     
     // if err != nil {
     //     respondWithError(w, http.StatusInternalServerError, err.Error())

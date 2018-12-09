@@ -11,7 +11,11 @@ Exposes APIs to manage the domains entered, as well as manually trigger the job 
 ```
 docker build . -t gddu
 
-docker run -v hostnames.json:/data/hostnames.json gddu
+docker run -v hostnames.json:/data/hostnames.json -p 8000:8000 gddu
+
+or on windows
+
+docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gddu gddu
 ```
 
 ## hostnames.json file format

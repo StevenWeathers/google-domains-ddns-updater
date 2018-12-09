@@ -47,7 +47,8 @@ func postToGoogleDns(username string, password string, domain string, ip string)
 	log.Println(string(body))
 }
 
-func attemptIpAddressUpdates(hostnames Hostnames) {
+func attemptIpAddressUpdates() {
+    var hostnames = getHostnamesFromJson()
     ip, err := ipify.GetIp()
 
     if err != nil {
@@ -75,15 +76,13 @@ func main() {
     setJsonFilePath(getEnv("JSONPATH", "/data/hostnames.json"))
     var cadence string = getEnv("CADENCE", "@hourly")
     var listenPort string = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
-    var css string = "/static/css/"
-    var js string = "/static/js/"
-    var entry string = "/static/index.html"
+    var staticDir = getEnv("STATICDIR", "/static")
+    var css string = fmt.Sprintf("%s/css/", staticDir)
+    var js string = fmt.Sprintf("%s/js/", staticDir)
+    var entry string = fmt.Sprintf("%s/index.html", staticDir)
    
-    var hostnames = getHostnamesFromJson()
-
-    attemptIpAddressUpdates(hostnames) // run at start for good measure, @todo add endpoint to maunally trigger this as well
     c := cron.New()
-    c.AddFunc(cadence, func() { attemptIpAddressUpdates(hostnames) })
+    c.AddFunc(cadence, func() { attemptIpAddressUpdates() })
     c.Start()
     
     router := mux.NewRouter()

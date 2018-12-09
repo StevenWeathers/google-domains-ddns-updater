@@ -35,7 +35,7 @@ COPY ./package-lock.json /vueapp
 COPY ./babel.config.js /vueapp
 WORKDIR /vueapp
 # install node packages
-RUN npm set progress=false && npm config set depth 0
+RUN npm set progress=false
 RUN npm install
 # Build the vue.js app
 RUN npm run build

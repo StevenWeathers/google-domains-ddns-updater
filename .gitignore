@@ -14,6 +14,7 @@
 .glide/
 
 hostnames.json
+hostnames-backup.json
 
 # node/vue files
 .DS_Store

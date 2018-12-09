@@ -2,93 +2,52 @@
   <v-app id="inspire">
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-title>Google Domain DDNS Updater</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn flat @click="addHostname">Add Hostname</v-btn>
+      </v-toolbar-items>
     </v-toolbar>
     <v-content>
       <v-container fluid fill-height>
-        <v-layout
-          justify-center
-          align-center
-        >
-          <v-flex text-xs-center>
-            <ul v-if="errors && errors.length">
-              <li v-for="error of errors">
-                <v-alert
-                  :value="true"
-                  type="error"
-                >
-                  {{error.message}}
-                </v-alert>
-              </li>
-            </ul>
-            
-            <v-btn color="success">Add</v-btn>
-            <v-data-table
-              :headers="headers"
-              :items="hostnames"
-              class="elevation-1"
-              hide-actions
-            >
-              <template slot="items" slot-scope="props">
-                <td class="text-xs-left">{{ props.item.domain }}</td>
-                <td class="text-xs-left">{{ props.item.username }}</td>
-                <td class="text-xs-left">{{ props.item.password }}</td>
-                <td>
-                  <v-btn color="error">Delete</v-btn>
-                  <v-btn color="info">Edit</v-btn>
-                </td>
-              </template>
-            </v-data-table>
+        <v-layout justify-center align-center>
+          <v-flex>
+            <AddHostname v-if="showAddHostname" v-on:closeAddHostname="showAddHostname = false" />
+            <HostnamesList v-else/>
           </v-flex>
         </v-layout>
       </v-container>
     </v-content>
     <v-footer color="indigo" app>
-      <span class="white--text">&nbsp; Visit the <a href="https://github.com/StevenWeathers/google-domains-ddns-updater">Github Repo</a></span>
+      <span class="white--text">&nbsp; Visit the
+        <a href="https://github.com/StevenWeathers/google-domains-ddns-updater">Github Repo</a>
+      </span>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-  import axios from 'axios';
+import HostnamesList from "./components/HostnamesList.vue";
+import AddHostname from "./components/AddHostname.vue";
 
-  export default {
-    data() {
-      return {
-        headers: [
-          {
-            text: 'Domain',
-            align: 'left',
-            value: 'domain'
-          },
-          {
-            text: 'Username',
-            sortable: false,
-            align: 'left'
-          },
-          {
-            text: 'Password',
-            sortable: false,
-            align: 'left'
-          },
-          {
-            text: 'Actions',
-            sortable: false,
-            align: 'left'
-          }
-        ],
-        hostnames: [],
-        errors: []
-      }
+export default {
+  name: "app",
+  data() {
+    return {
+      hostname: {},
+      showAddHostname: false,
+    }
+  },
+  components: {
+    HostnamesList,
+    AddHostname
+  },
+   methods: {
+    addHostname() {
+      this.showAddHostname = true;
     },
-    created() {
-      axios.get(`/hostnames`)
-      .then(response => {
-        // JSON responses are automatically parsed.
-        this.hostnames = response.data.hostnames
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+    editHostname(hostname) {
+      this.hostname = hostname;
     }
   }
+};
 </script>
