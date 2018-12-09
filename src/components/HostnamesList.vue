@@ -53,7 +53,7 @@ export default {
   },
   created() {
     axios
-      .get(`/hostnames`)
+      .get(`/api/hostnames`)
       .then(response => {
         this.hostnames = response.data.hostnames
       })
@@ -64,7 +64,7 @@ export default {
   methods: {
     handleDelete(domain) {
       axios
-        .delete(`/hostnames/${domain}`)
+        .delete(`/api/hostnames/${domain}`)
         .then(response => {
           const hostnameIndex = this.hostnames.findIndex(hostname => hostname.domain === domain)
           this.hostnames.splice(hostnameIndex, 1)

@@ -103,12 +103,12 @@ func main() {
 	router := mux.NewRouter()
 	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(css))))
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(js))))
-	router.HandleFunc("/hostnames", GetHostnames).Methods("GET")
-	router.HandleFunc("/hostnames/{domain}", GetHostname).Methods("GET")
-	router.HandleFunc("/hostnames", CreateHostname).Methods("POST")
-	router.HandleFunc("/hostnames/{domain}", UpdateHostname).Methods("PUT")
-	router.HandleFunc("/hostnames/{domain}", DeleteHostname).Methods("DELETE")
-	router.HandleFunc("/triggerUpdate", TriggerUpdate).Methods("GET")
+	router.HandleFunc("/api/hostnames", GetHostnames).Methods("GET")
+	router.HandleFunc("/api/hostnames/{domain}", GetHostname).Methods("GET")
+	router.HandleFunc("/api/hostnames", CreateHostname).Methods("POST")
+	router.HandleFunc("/api/hostnames/{domain}", UpdateHostname).Methods("PUT")
+	router.HandleFunc("/api/hostnames/{domain}", DeleteHostname).Methods("DELETE")
+	router.HandleFunc("/api/triggerUpdate", TriggerUpdate).Methods("GET")
 	router.PathPrefix("/").HandlerFunc(IndexHandler(entry))
 
 	srv := &http.Server{

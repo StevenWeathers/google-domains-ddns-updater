@@ -47,11 +47,11 @@ export default {
         if (this.$refs.form.validate()) {
           const hostname = { ...this.hostname }
           let method = 'post'
-          let endpoint = '/hostnames'
+          let endpoint = '/api/hostnames'
           
           if (this.isEdit) {
             method = 'put'
-            endpoint = `/hostnames/${this.hostname.domain}`
+            endpoint = `${endpoint}/${this.hostname.domain}`
             delete hostname.domain
           }
 

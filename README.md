@@ -34,13 +34,13 @@ docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gdd
 ## API Endpoints (unsecured, unvalidated)
 ```
 [GET]
-/hostnames
+/api/hostnames
 
 [GET]
-/hostnames/domain.com
+/api/hostnames/domain.com
 
 [POST]
-/hostnames
+/api/hostnames
 {
     "domain": "google.com",
     "username": "google",
@@ -48,17 +48,17 @@ docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gdd
 }
 
 [PUT]
-/hostnames/domain.com
+/api/hostnames/domain.com
 {
     "username": "google",
     "password": "elgoog"
 }
 
 [DELETE]
-/hostnames/domain.com
+/api/hostnames/domain.com
 
 [GET]
-/triggerUpdate
+/api/triggerUpdate
 ```
 
 # Development

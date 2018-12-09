@@ -63,7 +63,7 @@ export default {
     },
     triggerJob() {
       axios
-        .get('/triggerUpdate')
+        .get('/api/triggerUpdate')
     }
   }
 };
