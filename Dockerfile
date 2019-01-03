@@ -63,6 +63,7 @@ COPY --from=builderGo /data /data
 USER appuser
 
 ENV CADENCE "@hourly"
+ENV JSONPATH "/data/hostnames.json"
 VOLUME ["/data"]
 
 # Run the gddu binary.

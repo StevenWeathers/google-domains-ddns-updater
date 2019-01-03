@@ -90,7 +90,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func main() {
-	setJSONFilePath(getEnv("JSONPATH", "/data/hostnames.json"))
+	setJSONFilePath(getEnv("JSONPATH", "data/hostnames.json"))
 	var cadence = getEnv("CADENCE", "@hourly")
 	var listenPort = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
 
