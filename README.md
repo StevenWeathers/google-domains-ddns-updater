@@ -11,11 +11,11 @@ Exposes APIs to manage the domains entered, as well as manually trigger the job 
 ```
 docker build . -t gddu
 
-docker run -v hostnames.json:/data/hostnames.json -p 8000:8000 gddu
+docker run -v data:/data -p 8000:8000 gddu
 
 or on windows
 
-docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gddu gddu
+docker run -v ${PWD}\data:/data -p 8000:8000 --name gddu gddu
 ```
 
 ## hostnames.json file format
@@ -64,8 +64,20 @@ docker run -v ${PWD}\hostnames.json:/data/hostnames.json -p 8000:8000 --name gdd
 # Development
 
 ## Go App
+
+### Building with Make
 ```
-currently using Docker, local directions to follow...
+make build
+```
+
+### Testing with Make
+```
+make test
+```
+
+### Run with Make
+```
+make run
 ```
 
 ## Vue UI

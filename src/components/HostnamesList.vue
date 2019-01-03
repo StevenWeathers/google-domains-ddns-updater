@@ -65,7 +65,7 @@ export default {
     handleDelete(domain) {
       axios
         .delete(`/api/hostnames/${domain}`)
-        .then(response => {
+        .then(() => {
           const hostnameIndex = this.hostnames.findIndex(hostname => hostname.domain === domain)
           this.hostnames.splice(hostnameIndex, 1)
         })

@@ -8,15 +8,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// IndexHandler route handler handles the entrypoint for UI
-func IndexHandler(entrypoint string) func(w http.ResponseWriter, r *http.Request) {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, entrypoint)
-	}
-
-	return http.HandlerFunc(fn)
-}
-
 // GetHostnames route handler gets the hostnames json array
 // and responds with the JSON output
 // @TODO - add error handling

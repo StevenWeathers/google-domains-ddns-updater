@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"os"
 	"time"
+	_ "gddu/statik"
     "github.com/rdegges/go-ipify"
 	"github.com/gorilla/mux"
+	"github.com/rakyll/statik/fs"
 	"github.com/robfig/cron"
 )
 
@@ -91,25 +93,30 @@ func main() {
 	setJSONFilePath(getEnv("JSONPATH", "/data/hostnames.json"))
 	var cadence = getEnv("CADENCE", "@hourly")
 	var listenPort = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
-	var staticDir = getEnv("STATICDIR", "/static")
-	var css = fmt.Sprintf("%s/css/", staticDir)
-	var js = fmt.Sprintf("%s/js/", staticDir)
-	var entry = fmt.Sprintf("%s/index.html", staticDir)
+
+	statikFS, err := fs.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	staticHandler := http.FileServer(statikFS)
 
 	c := cron.New()
 	c.AddFunc(cadence, attemptIPAddressUpdates)
 	c.Start()
 
 	router := mux.NewRouter()
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(css))))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(js))))
+	router.PathPrefix("/css/").Handler(staticHandler)
+	router.PathPrefix("/js/").Handler(staticHandler)
 	router.HandleFunc("/api/hostnames", GetHostnames).Methods("GET")
 	router.HandleFunc("/api/hostnames/{domain}", GetHostname).Methods("GET")
 	router.HandleFunc("/api/hostnames", CreateHostname).Methods("POST")
 	router.HandleFunc("/api/hostnames/{domain}", UpdateHostname).Methods("PUT")
 	router.HandleFunc("/api/hostnames/{domain}", DeleteHostname).Methods("DELETE")
 	router.HandleFunc("/api/triggerUpdate", TriggerUpdate).Methods("GET")
-	router.PathPrefix("/").HandlerFunc(IndexHandler(entry))
+	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = "/"
+		staticHandler.ServeHTTP(w, r)
+	})
 
 	srv := &http.Server{
 		Handler: router,

@@ -13,6 +13,7 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+/data
 hostnames.json
 hostnames-backup.json
 
@@ -20,6 +21,8 @@ hostnames-backup.json
 .DS_Store
 node_modules
 /dist
+/vendor
+
 
 # local env files
 .env.local

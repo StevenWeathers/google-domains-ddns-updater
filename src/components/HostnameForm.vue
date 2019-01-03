@@ -16,7 +16,7 @@ import axios from "axios";
 export default {
   name: "AddHostname",
   props: {
-    isEdit: false,
+    isEdit: Boolean,
     editHostname: {},
   },
   data() {
@@ -60,7 +60,7 @@ export default {
             url: endpoint,
             data: hostname
           })
-            .then(response => {
+            .then(() => {
                 this.$emit('closeAddHostname')
             })
             .catch(e => {
