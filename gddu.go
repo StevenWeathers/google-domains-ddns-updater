@@ -126,5 +126,8 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	log.Println("Access the WebUI via 127.0.0.1" + listenPort)
+	log.Println("API endpoints accessible via 127.0.0.1" + listenPort)
+
 	log.Fatal(srv.ListenAndServe())
 }
