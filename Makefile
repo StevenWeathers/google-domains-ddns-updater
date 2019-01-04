@@ -39,6 +39,9 @@ deps:
 release:
 	$(GORELEASER)
 
+release-dry:
+	$(GORELEASER) --skip-publish
+
 
 # Cross compilation
 build-linux:

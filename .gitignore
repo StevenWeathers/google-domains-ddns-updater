@@ -23,6 +23,7 @@ hostnames-backup.json
 node_modules
 /dist
 /vendor
+/release
 
 
 # local env files
