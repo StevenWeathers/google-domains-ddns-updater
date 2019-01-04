@@ -8,9 +8,10 @@
 #     - go generate ./...
 builds:
 - goos:
-  - darwin
-  - linux
   - windows
+- goarch:
+  - arm
+  - arm64
 - env:
   - CGO_ENABLED=0
 archive:
@@ -20,6 +21,8 @@ archive:
     windows: Windows
     386: i386
     amd64: x86_64
+    arm: arm
+    arm64: arm_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
