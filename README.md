@@ -1,10 +1,12 @@
 # google-domains-ddns-updater
 
-API Server to update [GoogleDomains Dynamic DNS](https://support.google.com/domains/answer/6147083?hl=en) entries for a list of domains.
+Server to update [GoogleDomains Dynamic DNS](https://support.google.com/domains/answer/6147083?hl=en) entries for a list of domains.
 
 Runs a cron job to make a request to google for each domain entered.
 
 Exposes APIs to manage the domains entered, as well as manually trigger the job when needed.
+
+Also exposes a WebUI (unprotected) that utilizes the APIs to provide easy management.
 
 ## Running with Docker
 
@@ -29,6 +31,11 @@ docker run -v ${PWD}\data:/data -p 8000:8000 --name gddu gddu
         }
     ]
 }
+```
+
+## WebUI
+```
+visit http://localhost:8000 in your browser
 ```
 
 ## API Endpoints (unsecured, unvalidated)
