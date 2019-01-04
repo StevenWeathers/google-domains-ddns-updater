@@ -12,8 +12,12 @@ BINARY_NAME=gddu
 BINARY_UNIX=$(BINARY_NAME)_unix
 STATIC_DIR=dist
 VENDOR_DIR=vendor/gddu
+GORELEASER=goreleaser release --rm-dist
 
 all: test build
+build-deps: 
+	$(NPMBUILD)
+	$(STATIKCMD) -src=$(STATIC_DIR) -dest=$(VENDOR_DIR)
 build: 
 	$(NPMBUILD)
 	$(STATIKCMD) -src=$(STATIC_DIR) -dest=$(VENDOR_DIR)
@@ -31,6 +35,9 @@ run:
 deps:
 	$(GOGET) github.com/markbates/goth
 	$(GOGET) github.com/markbates/pop
+
+release:
+	$(GORELEASER)
 
 
 # Cross compilation
