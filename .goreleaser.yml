@@ -23,7 +23,7 @@ dockers:
     - "stevenweathers/google-domains-ddns-updater:{{ .Tag }}"
     - "stevenweathers/google-domains-ddns-updater:latest"
 archives:
-  replacements:
+- replacements:
     darwin: Darwin
     linux: Linux
     windows: Windows
