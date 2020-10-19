@@ -61,12 +61,12 @@ visit http://localhost:8000 in your browser
 ## Use latest docker image
 
 ```
-docker pull stevenweathers/answer-storm
+docker pull stevenweathers/google-domains-ddns-updater
 ```
 
 ## Use latest released binary
 
-[![](https://img.shields.io/github/v/release/stevenweathers/answer-storm?include_prereleases)](https://github.com/StevenWeathers/answer-storm/releases/latest)
+[![](https://img.shields.io/github/v/release/stevenweathers/google-domains-ddns-updater?include_prereleases)](https://github.com/StevenWeathers/google-domains-ddns-updater/releases/latest)
 
 # Running locally
 
