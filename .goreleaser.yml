@@ -9,10 +9,21 @@ before:
     # Build dependencies
     - make build-deps
 builds:
-- env:
-  - CGO_ENABLED=0
+  -
+    goos:
+    - linux
+    - darwin
+    - windows
+    goarch:
+    - amd64
+    - arm
+    - arm64
+    env:
+      - CGO_ENABLED=0
 dockers:
   - 
+    goos: linux
+    goarch: amd64
     dockerfile: "build/gorDockerfile"
     binaries:
     - google-domains-ddns-updater
@@ -20,14 +31,14 @@ dockers:
     - "stevenweathers/google-domains-ddns-updater:{{ .Tag }}"
     - "stevenweathers/google-domains-ddns-updater:latest"
 archives:
-- replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
-    arm: arm
-    arm64: arm_64
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+      arm: arm
+      arm64: arm_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
