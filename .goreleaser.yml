@@ -22,7 +22,7 @@ dockers:
     image_templates:
     - "stevenweathers/google-domains-ddns-updater:{{ .Tag }}"
     - "stevenweathers/google-domains-ddns-updater:latest"
-archive:
+archives:
   replacements:
     darwin: Darwin
     linux: Linux
