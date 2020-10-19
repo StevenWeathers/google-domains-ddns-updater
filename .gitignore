@@ -1,9 +1,9 @@
 # Binaries for programs and plugins
 *.exe
+*.exe~
 *.dll
 *.so
 *.dylib
-gddu
 
 # Test binary, build with `go test -c`
 *.test
@@ -11,20 +11,21 @@ gddu
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-.glide/
-
-/data
-hostnames.json
-hostnames-backup.json
-
-# node/vue files
 .DS_Store
-node_modules
-/dist
-/vendor
-/release
-
+node_modules/
+dist/
+release/
+data/
+# how static assets get bundled
+*-packr.go
+packrd/
+pkged*.go
+# *nix compiled binary
+gddu
+gddns
+google-domains-ddns-updater
+# docker volumes
+data/
 
 # local env files
 .env.local
@@ -43,3 +44,9 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+# Optional eslint cache
+.eslintcache
+
+# local config
+config.yaml

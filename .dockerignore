@@ -3,7 +3,12 @@ dist/
 node_modules/
 .gitignore
 .gitattributes
-hostnames*.json
 vendor/
 data/
 release/
+packrd/
+data/
+*-packr.go
+pkged*.go
+gddu*
+google-domains-ddns-updater*
