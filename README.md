@@ -8,18 +8,6 @@ Exposes APIs to manage the domains entered, as well as manually trigger the job 
 
 Also exposes a WebUI (unprotected) that utilizes the APIs to provide easy management.
 
-## Running with Docker
-
-```
-docker build . -t gddu
-
-docker run -v data:/data -p 8000:8000 gddu
-
-or on windows
-
-docker run -v ${PWD}\data:/data -p 8000:8000 --name gddu gddu
-```
-
 ## hostnames.json file format
 ```
 {
@@ -68,48 +56,90 @@ visit http://localhost:8000 in your browser
 /api/triggerUpdate
 ```
 
-# Development
+# Running in production
 
-## Go App
+## Use latest docker image
 
-### Building with Make
 ```
-make build
-```
-
-### Testing with Make
-```
-make test
+docker pull stevenweathers/answer-storm
 ```
 
-### Run with Make
+## Use latest released binary
+
+[![](https://img.shields.io/github/v/release/stevenweathers/answer-storm?include_prereleases)](https://github.com/StevenWeathers/answer-storm/releases/latest)
+
+# Running locally
+
+## Building and running with Docker (preferred solution)
+
+### Using Docker Compose
+
 ```
-make run
+docker-compose up --build
 ```
 
-## Vue UI
+### Using Docker without Compose
 
-## Project setup
+This solution will require you to pass environment variables or setup the config file, as well as setup and manage the DB yourself.
+
 ```
+docker build ./ -f ./build/Dockerfile -t gddu:latest
+docker run --publish 8080:8080 --name gddu gddu:latest
+```
+
+## Building
+
+### Install dependencies
+```
+go get
+go go install github.com/markbates/pkger/cmd/pkger
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Build with Make
 ```
-npm run serve
+make build
 ```
+### OR manual steps
 
-### Compiles and minifies for production
+### Build static assets
 ```
 npm run build
 ```
 
-### Run your tests
+### bundle up static assets
 ```
-npm run test
+pkger
 ```
 
-### Lints and fixes files
+### Build for current OS
 ```
-npm run lint
+go build
 ```
+
+# Adding new Locale's
+Using svelte-i18n **Google Domains DDNS Updater** now supports Locale selection on the UI (Default en-US)
+
+Adding new locale's involves just a couple of steps.
+
+1. First add the locale dictionary json files in ```web/public/lang/default/``` and ```web/public/lang/friendly/``` by copying the en.json and just changing the values of all keys
+1. Second, the locale will need to be added to the locales list used by switcher component in ```web/config.js``` ```locales``` object
+
+# Configuration
+Thunderdome may be configured through environment variables or via a yaml file `config.yaml`
+located in one of:
+
+* `/etc/google-domains-ddns-updater/`
+* `$HOME/.config/google-domains-ddns-updater/`
+* Current working directory
+
+The following configuration options exists:
+
+| Option                     | Environment Variable | Description                                | Default Value           |
+| -------------------------- | -------------------- | ------------------------------------------ | ------------------------|
+| `http.port`                | PORT                 | Which port to listen for HTTP connections. | 8000 |
+| `http.path_prefix`         | PATH_PREFIX          | Prefix added to all application urls for shared domain use, in format of `/{prefix}` e.g. `/gddu` | |
+| `config.toast_timeout`     | CONFIG_TOAST_TIMEOUT | Number of milliseconds before notifications are hidden. | 1000 |
+| `config.default_locale`   | CONFIG_DEFAULT_LOCALE | The default locale (language) for the UI | en |
+| `config.json_path`   | JSONPATH | The path where the json file is stored | data/hostnames.json |
+| `config.cadence`   | CADENCE | The cadence at which the cron will run | @hourly |

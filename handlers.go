@@ -3,10 +3,63 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/markbates/pkger"
+	"github.com/spf13/viper"
 )
+
+// handleIndex parses the index html file, injecting any relevant data
+func (s *server) handleIndex() http.HandlerFunc {
+	type AppConfig struct {
+		ToastTimeout  int
+		DefaultLocale string
+		AppVersion    string
+		PathPrefix    string
+	}
+	type UIConfig struct {
+		AppConfig AppConfig
+	}
+
+	// get the html template from dist, have it ready for requests
+	indexFile, ioErr := pkger.Open("/dist/index.html")
+	if ioErr != nil {
+		log.Println("Error opening index template")
+		log.Fatal(ioErr)
+	}
+	tmplContent, ioReadErr := ioutil.ReadAll(indexFile)
+	if ioReadErr != nil {
+		// this will hopefully only possibly panic during development as the file is already in memory otherwise
+		log.Println("Error reading index template")
+		log.Fatal(ioReadErr)
+	}
+
+	tmplString := string(tmplContent)
+	tmpl, tmplErr := template.New("index").Parse(tmplString)
+	if tmplErr != nil {
+		log.Println("Error parsing index template")
+		log.Fatal(tmplErr)
+	}
+
+	appConfig := AppConfig{
+		ToastTimeout:  viper.GetInt("config.toast_timeout"),
+		DefaultLocale: viper.GetString("config.default_locale"),
+		AppVersion:    s.config.Version,
+		PathPrefix:    s.config.PathPrefix,
+	}
+
+	data := UIConfig{
+		AppConfig: appConfig,
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		tmpl.Execute(w, data)
+	}
+}
 
 // GetHostnames route handler gets the hostnames json array
 // and responds with the JSON output
@@ -54,7 +107,7 @@ func UpdateHostname(w http.ResponseWriter, r *http.Request) {
 	updatedHostname.Domain = params["domain"]
 
 	var hostnames = updateHostname(updatedHostname)
-	
+
 	respondWithJSON(w, http.StatusOK, hostnames)
 }
 

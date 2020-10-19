@@ -1,48 +1,89 @@
 # Go parameters
 GOCMD=go
-STATIKCMD=statik
+STATICPACKCMD=pkger
 NPMCMD=npm
-NPMLINT=$(NPMCMD) run lint
 NPMBUILD=$(NPMCMD) run build
 GOBUILD=$(GOCMD) build
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
-GOGET=$(GOCMD) get
+GOFMT=gofmt
 BINARY_NAME=gddu
 BINARY_UNIX=$(BINARY_NAME)_unix
-STATIC_DIR=dist
-VENDOR_DIR=vendor/gddu
+BINARY_WINDOWS=gddu.exe
 GORELEASER=goreleaser release --rm-dist
+NEXT_DOCKER_TAG=stevenweathers/google-domains-ddns-updater:next
+LATEST_DOCKER_TAG=stevenweathers/google-domains-ddns-updater:latest
+VERSION_TAG := $(shell git tag --sort=-version:refname | head -n 1)
+GOBUILDTAG=-ldflags "-X main.version=$(VERSION_TAG)"
+DOCKER_BUILD_VERSION=--build-arg BUILD_VERSION=${VERSION_TAG}
 
-all: test build
+all: build
 build-deps: 
 	$(NPMBUILD)
-	$(STATIKCMD) -src=$(STATIC_DIR) -dest=$(VENDOR_DIR)
+	$(STATICPACKCMD)
+
 build: 
 	$(NPMBUILD)
-	$(STATIKCMD) -src=$(STATIC_DIR) -dest=$(VENDOR_DIR)
+	$(STATICPACKCMD)
 	$(GOBUILD) -o $(BINARY_NAME) -v
-test: 
-	$(NPMLINT)
-	$(GOTEST) -v ./...
+
 clean: 
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
 	rm -f $(BINARY_UNIX)
-run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./...
-	./$(BINARY_NAME)
-deps:
-	$(GOGET) github.com/markbates/goth
-	$(GOGET) github.com/markbates/pop
+	rm -f $(BINARY_WINDOWS)
+	rm -f *-packr.go
+	rm -rf dist
+	rm -rf release
+	rm -rf pkged*.go
 
-release:
-	$(GORELEASER)
-
-release-dry:
-	$(GORELEASER) --skip-publish
-
+format:
+	$(GOFMT) -s -w datasrc.go
+	$(GOFMT) -s -w handlers.go
+	$(GOFMT) -s -w client.go
+	$(GOFMT) -s -w hub.go
+	$(GOFMT) -s -w main.go
+	$(GOFMT) -s -w utils.go
 
 # Cross compilation
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
+
+build-windows:
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o $(BINARY_WINDOWS) -v
+
+dev: 
+	$(NPMBUILD)
+	$(STATICPACKCMD)
+	$(GOBUILD) -o $(BINARY_NAME) -v
+
+	./$(BINARY_NAME)
+dev-go: 
+	$(STATICPACKCMD)
+	$(GOBUILD) -o $(BINARY_NAME) -v
+
+	./$(BINARY_NAME)
+run:
+	./$(BINARY_NAME)
+
+gorelease:
+	$(GORELEASER)
+
+gorelease-dev-dry:
+	$(GORELEASER) --skip-publish --skip-validate
+
+gorelease-dry:
+	$(GORELEASER) --skip-publish
+
+gorelease-snapshot:
+	$(GORELEASER) --snapshot
+
+build-next-image:
+	docker build ./ -f ./build/Dockerfile -t $(NEXT_DOCKER_TAG) ${DOCKER_BUILD_VERSION}
+
+push-next-image:
+	docker push $(NEXT_DOCKER_TAG)
+
+build-latest-image:
+	docker build ./ -f ./build/Dockerfile -t $(LATEST_DOCKER_TAG) ${DOCKER_BUILD_VERSION}
+
+push-latest-image:
+	docker push $(LATEST_DOCKER_TAG)

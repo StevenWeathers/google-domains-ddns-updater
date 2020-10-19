@@ -6,14 +6,32 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
-	_ "gddu/statik"
-    "github.com/rdegges/go-ipify"
+
 	"github.com/gorilla/mux"
-	"github.com/rakyll/statik/fs"
+	"github.com/rdegges/go-ipify"
 	"github.com/robfig/cron"
+	"github.com/spf13/viper"
 )
+
+var (
+	version = "dev"
+)
+
+// ServerConfig holds server global config values
+type ServerConfig struct {
+	// port the application server will listen on
+	ListenPort string
+	// the app version
+	Version string
+	// PathPrefix allows the application to be run on a shared domain
+	PathPrefix string
+}
+
+type server struct {
+	config *ServerConfig
+	router *mux.Router
+}
 
 var jsonFilePath string
 
@@ -25,19 +43,6 @@ func getJSONFilePath() string {
 // setJSONFilePath sets the jsonFilePath string
 func setJSONFilePath(path string) {
 	jsonFilePath = path
-}
-
-// getEnv gets environment variable matching key string
-// and if it finds none uses fallback string
-// returning either the matching or fallback string
-func getEnv(key string, fallback string) string {
-	var result = os.Getenv(key)
-
-	if result == "" {
-		result = fallback
-	}
-
-	return result
 }
 
 // postToGoogleDNS makes a call to GoogleDomains DDNS with provided hostname details
@@ -90,44 +95,44 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func main() {
-	setJSONFilePath(getEnv("JSONPATH", "data/hostnames.json"))
-	var cadence = getEnv("CADENCE", "@hourly")
-	var listenPort = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
+	log.Println("Google Domains DDNS Updater version " + version)
 
-	statikFS, err := fs.New()
-	if err != nil {
-		log.Fatal(err)
+	InitConfig()
+
+	pathPrefix := viper.GetString("http.path_prefix")
+	router := mux.NewRouter()
+
+	if pathPrefix != "" {
+		router = router.PathPrefix(pathPrefix).Subrouter()
 	}
-	staticHandler := http.FileServer(statikFS)
+
+	setJSONFilePath(viper.GetString("config.json_path"))
+	var cadence = viper.GetString("config.cadence")
 
 	c := cron.New()
 	c.AddFunc(cadence, attemptIPAddressUpdates)
 	c.Start()
 
-	router := mux.NewRouter()
-	router.PathPrefix("/css/").Handler(staticHandler)
-	router.PathPrefix("/js/").Handler(staticHandler)
-	router.HandleFunc("/api/hostnames", GetHostnames).Methods("GET")
-	router.HandleFunc("/api/hostnames/{domain}", GetHostname).Methods("GET")
-	router.HandleFunc("/api/hostnames", CreateHostname).Methods("POST")
-	router.HandleFunc("/api/hostnames/{domain}", UpdateHostname).Methods("PUT")
-	router.HandleFunc("/api/hostnames/{domain}", DeleteHostname).Methods("DELETE")
-	router.HandleFunc("/api/triggerUpdate", TriggerUpdate).Methods("GET")
-	router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = "/"
-		staticHandler.ServeHTTP(w, r)
-	})
+	s := &server{
+		config: &ServerConfig{
+			ListenPort: viper.GetString("http.port"),
+			Version:    version,
+			PathPrefix: pathPrefix,
+		},
+		router: router,
+	}
+
+	s.routes()
 
 	srv := &http.Server{
-		Handler: router,
-		Addr:    listenPort,
+		Handler: s.router,
+		Addr:    fmt.Sprintf(":%s", s.config.ListenPort),
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Println("Access the WebUI via 127.0.0.1" + listenPort)
-	log.Println("API endpoints accessible via 127.0.0.1" + listenPort)
+	log.Println("Access the WebUI via 127.0.0.1:" + s.config.ListenPort)
 
 	log.Fatal(srv.ListenAndServe())
 }

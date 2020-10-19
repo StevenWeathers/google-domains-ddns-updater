@@ -1,0 +1,9 @@
+{
+    "appName": "Google Domains DDNS Updater",
+    "appVersion": "Version {version}",
+    "footer": {
+        "authoredBy": "by {authorOpen}Steven Weathers{authorClose}.",
+        "license": "The source code is licensed {licenseOpen}MIT{licenseClose}.",
+        "poweredBy": "Powered by {svelteOpen}Svelte{svelteClose} and {goOpen}Go{goClose}"
+    }
+}
