@@ -5,10 +5,11 @@
 
 <svg
     class="fill-current"
-    {width}
-    {height}
+    width="{width}"
+    height="{height}"
     viewBox="0 0 1792 1792"
-    xmlns="http://www.w3.org/2000/svg">
+    xmlns="http://www.w3.org/2000/svg"
+>
     <path
         d="M1490 1322q0 40-28 68l-136 136q-28 28-68 28t-68-28l-294-294-294
         294q-28 28-68

@@ -4,4 +4,4 @@
     export let onClick = () => {}
 </script>
 
-<HollowButton {onClick}>Test Button</HollowButton>
+<HollowButton onClick="{onClick}">Test Button</HollowButton>

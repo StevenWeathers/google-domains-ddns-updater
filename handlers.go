@@ -15,7 +15,7 @@ import (
 // get the index template from embedded filesystem
 func (s *server) getIndexTemplate(FSS fs.FS) *template.Template {
 	// get the html template from dist, have it ready for requests
-	tmplContent, ioErr := fs.ReadFile(FSS, "index.html")
+	tmplContent, ioErr := fs.ReadFile(FSS, "static/index.html")
 	if ioErr != nil {
 		log.Println("Error opening index template")
 		if !embedUseOS {

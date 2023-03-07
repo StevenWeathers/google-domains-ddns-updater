@@ -38,10 +38,10 @@
 
     function triggerJob() {
         xfetch('/api/triggerUpdate')
-            .then(function() {
+            .then(function () {
                 notifications.success('Job triggered successfully')
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 notifications.danger(
                     'Error encountered attempting to trigger job',
                 )
@@ -51,8 +51,12 @@
     onDestroy(router.unlisten)
 </script>
 
-<style>
-    :global(.nav-logo) {
+<style lang="postcss" global>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    .nav-logo {
         max-height: 3.75rem;
     }
 </style>
@@ -62,7 +66,8 @@
     <nav
         class="flex items-center justify-between flex-wrap bg-white p-6"
         role="navigation"
-        aria-label="main navigation">
+        aria-label="main navigation"
+    >
         <div class="flex items-center flex-shrink-0 mr-6">
             <a href="{appRoutes.landing}">{$_('appName')}</a>
         </div>
@@ -72,23 +77,27 @@
             </HollowButton>
             <LocaleSwitcher
                 selectedLocale="{$locale}"
-                on:locale-changed="{e => setupI18n({
+                on:locale-changed="{e =>
+                    setupI18n({
                         withLocale: e.detail,
-                    })}" />
+                    })}"
+            />
         </div>
     </nav>
 
     <svelte:component
         this="{currentPage.route}"
         {...currentPage.params}
-        {notifications}
-        {router}
-        {xfetch} />
+        notifications="{notifications}"
+        router="{router}"
+        xfetch="{xfetch}"
+    />
 
     <footer class="p-6 text-center">
         <a
             href="https://github.com/StevenWeathers/google-domains-ddns-updater"
-            class="{footerLinkClasses}">
+            class="{footerLinkClasses}"
+        >
             {$_('appName')}
         </a>
         {@html $_('footer.authoredBy', {
