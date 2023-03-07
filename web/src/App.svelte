@@ -65,7 +65,6 @@
 {#if isLocaleLoaded}
     <nav
         class="flex items-center justify-between flex-wrap bg-white p-6"
-        role="navigation"
         aria-label="main navigation"
     >
         <div class="flex items-center flex-shrink-0 mr-6">
