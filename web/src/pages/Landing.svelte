@@ -13,16 +13,16 @@
     function getHostnames() {
         xfetch('/api/hostnames')
             .then(res => res.json())
-            .then(function(hs) {
+            .then(function (hs) {
                 hostnames = hs.hostnames
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 notifications.danger('Error retrieving hostnames')
             })
     }
 
     function deleteHostname(domain) {
-        return function() {
+        return function () {
             xfetch(`/api/hostnames/${domain}`, { method: 'DELETE' })
                 .then(() => {
                     const hostnameIndex = hostnames.findIndex(
@@ -31,7 +31,7 @@
                     hostnames.splice(hostnameIndex, 1)
                     hostnames = hostnames
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     notifications.danger(
                         `Error deleting hostname ${domain}: ${error.message}`,
                     )
@@ -40,7 +40,7 @@
     }
 
     function toggleHostnameEdit(hostname) {
-        return function() {
+        return function () {
             hostnameToEdit = hostname
             showEditHost = !showEditHost
         }
@@ -66,7 +66,8 @@
                 <div class="text-right">
                     <HollowButton
                         color="green"
-                        onClick="{toggleHostnameEdit({})}">
+                        onClick="{toggleHostnameEdit({})}"
+                    >
                         Add Hostname
                     </HollowButton>
                 </div>
@@ -91,12 +92,14 @@
                         <td class="border px-4 py-2 text-right">
                             <HollowButton
                                 onClick="{toggleHostnameEdit(hostname)}"
-                                color="blue">
+                                color="blue"
+                            >
                                 Edit
                             </HollowButton>
                             <HollowButton
                                 onClick="{deleteHostname(hostname.domain)}"
-                                color="red">
+                                color="red"
+                            >
                                 Delete
                             </HollowButton>
                         </td>
@@ -108,10 +111,11 @@
 
     {#if showEditHost}
         <HostnameForm
-            {hostnameToEdit}
+            hostnameToEdit="{hostnameToEdit}"
             toggleModal="{toggleHostnameEdit}"
             handleSave="{handleHostnameSave}"
-            {xfetch}
-            {notifications} />
+            xfetch="{xfetch}"
+            notifications="{notifications}"
+        />
     {/if}
 </PageLayout>

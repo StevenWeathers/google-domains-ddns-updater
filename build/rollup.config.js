@@ -1,13 +1,15 @@
 import svelte from 'rollup-plugin-svelte'
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 import livereload from 'rollup-plugin-livereload'
 import { terser } from 'rollup-plugin-terser'
 import copy from 'rollup-plugin-copy'
 import del from 'rollup-plugin-delete'
+import sveltePreprocess from 'svelte-preprocess'
+import html from '@rollup/plugin-html'
+import { template } from './buildHtmlTemplate.js'
 import postcss from 'rollup-plugin-postcss'
-import autoPreprocess from 'svelte-preprocess'
-import html from 'rollup-plugin-bundle-html'
+import postcssNesting from 'postcss-nesting'
 
 const production = !process.env.ROLLUP_WATCH
 
@@ -15,53 +17,57 @@ export default {
     input: 'web/src/main.js',
     output: {
         sourcemap: false,
-        format: 'iife',
-        name: 'app',
-        file: `dist/static/bundle.[hash].js`,
+        name: 'gddu',
+        format: 'esm',
+        dir: `dist/static/`,
+        entryFileNames: '[name]-[hash].js',
+        chunkFileNames: '[name].[hash].js',
+        assetFileNames: '[name].[hash].[extension]'
     },
     plugins: [
         del({ targets: 'dist/*' }),
         svelte({
-            preprocess: autoPreprocess({
+            preprocess: sveltePreprocess({
+                sourceMap: !production,
                 postcss: {
-                    configFilePath: 'build/postcss.config.js'
-                }
+                    plugins: [
+                        require('postcss-import'),
+                        require('tailwindcss/nesting'),
+                        require('tailwindcss'),
+                        require('autoprefixer')
+                    ],
+                },
             }),
-            // enable run-time checks when not in production
-            dev: !production,
-            // we'll extract any component CSS out into
-            // a separate file — better for performance
-            css: css => {
-                css.write(`dist/static/bundle.[hash].css`, false)
-            },
         }),
         postcss({
-            extract: `dist/static/tailwind.[hash].css`,
-            config: {
-                path: 'build/postcss.config.js'
-            }
+            plugins: [postcssNesting(), (production && require('cssnano'))],
+            extract: true
         }),
         // If you have external dependencies installed from
         // npm, you'll most likely need these plugins. In
         // some cases you'll need additional configuration —
         // consult the documentation for details:
         // https://github.com/rollup/rollup-plugin-commonjs
-        resolve(),
+        resolve({ browser: true, dedupe: ['svelte'] }),
         commonjs(),
 
         html({
-            template: 'web/public/index.html',
-            dest: 'dist',
-            filename: 'index.html',
-            absolute: true,
-            onlinePath: "{{.AppConfig.PathPrefix}}/static"
+            title: 'Google Domains DDNS Updater',
+            publicPath: '/static/',
+            template
         }),
 
         copy({
-            targets: {
-                'web/public/img': 'dist/img',
-                'web/public/lang': 'dist/lang',
-            },
+            targets: [
+                {
+                    src: 'web/public/img',
+                    dest: 'dist'
+                },
+                {
+                    src: 'web/public/lang',
+                    dest: 'dist',
+                }
+            ]
         }),
 
         // Watch the `dist` directory and refresh the

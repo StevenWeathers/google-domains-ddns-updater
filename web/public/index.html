@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
     <head>
+        ${metas}
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <head>
-            <link
-                href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
-                rel="stylesheet"
-            />
-        </head>
+        <link
+            href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
+            rel="stylesheet"
+        />
         <title>Google Domains DDNS Updater</title>
+        ${links}
     </head>
     <body class="bg-gray-200">
         <noscript>
@@ -21,9 +21,9 @@
             >
         </noscript>
         <div id="app"></div>
-        <!-- built files will be auto injected -->
         <script>
-            appConfig = {{ .AppConfig }}
+            appConfig = {{.AppConfig}}
         </script>
+        ${scripts}
     </body>
 </html>

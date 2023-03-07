@@ -68,7 +68,8 @@
     {disabled ? 'disabled' : ''}
     {additionalClasses}"
     on:click="{onClick}"
-    {type}
-    {disabled}>
+    type="{type}"
+    disabled="{disabled}"
+>
     <slot />
 </button>
