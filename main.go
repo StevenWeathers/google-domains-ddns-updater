@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -15,7 +16,8 @@ import (
 )
 
 var (
-	version = "dev"
+	version    = "dev"
+	embedUseOS = true
 )
 
 // ServerConfig holds server global config values
@@ -85,7 +87,7 @@ func attemptIPAddressUpdates() {
 //     respondWithJSON(w, code, map[string]string{"error": message})
 // }
 
-// responsdWithJSON takes a payload and writes the response
+// respondWithJSON takes a payload and writes the response
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
@@ -96,6 +98,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 
 func main() {
 	log.Println("Google Domains DDNS Updater version " + version)
+
+	embedUseOS = len(os.Args) > 1 && os.Args[1] == "live"
 
 	InitConfig()
 

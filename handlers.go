@@ -4,17 +4,39 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
+	"io/fs"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/markbates/pkger"
 	"github.com/spf13/viper"
 )
 
+// get the index template from embedded filesystem
+func (s *server) getIndexTemplate(FSS fs.FS) *template.Template {
+	// get the html template from dist, have it ready for requests
+	tmplContent, ioErr := fs.ReadFile(FSS, "index.html")
+	if ioErr != nil {
+		log.Println("Error opening index template")
+		if !embedUseOS {
+			log.Fatal(ioErr.Error())
+		}
+	}
+
+	tmplString := string(tmplContent)
+	tmpl, tmplErr := template.New("index").Parse(tmplString)
+	if tmplErr != nil {
+		log.Println("Error parsing index template")
+		if !embedUseOS {
+			log.Fatal(tmplErr.Error())
+		}
+	}
+
+	return tmpl
+}
+
 // handleIndex parses the index html file, injecting any relevant data
-func (s *server) handleIndex() http.HandlerFunc {
+func (s *server) handleIndex(FSS fs.FS) http.HandlerFunc {
 	type AppConfig struct {
 		ToastTimeout  int
 		DefaultLocale string
@@ -25,25 +47,7 @@ func (s *server) handleIndex() http.HandlerFunc {
 		AppConfig AppConfig
 	}
 
-	// get the html template from dist, have it ready for requests
-	indexFile, ioErr := pkger.Open("/dist/index.html")
-	if ioErr != nil {
-		log.Println("Error opening index template")
-		log.Fatal(ioErr)
-	}
-	tmplContent, ioReadErr := ioutil.ReadAll(indexFile)
-	if ioReadErr != nil {
-		// this will hopefully only possibly panic during development as the file is already in memory otherwise
-		log.Println("Error reading index template")
-		log.Fatal(ioReadErr)
-	}
-
-	tmplString := string(tmplContent)
-	tmpl, tmplErr := template.New("index").Parse(tmplString)
-	if tmplErr != nil {
-		log.Println("Error parsing index template")
-		log.Fatal(tmplErr)
-	}
+	tmpl := s.getIndexTemplate(FSS)
 
 	appConfig := AppConfig{
 		ToastTimeout:  viper.GetInt("config.toast_timeout"),
@@ -57,6 +61,10 @@ func (s *server) handleIndex() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		if embedUseOS {
+			tmpl = s.getIndexTemplate(FSS)
+		}
+
 		tmpl.Execute(w, data)
 	}
 }

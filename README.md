@@ -92,7 +92,6 @@ docker run --publish 8080:8080 --name gddu gddu:latest
 ### Install dependencies
 ```
 go get
-go go install github.com/markbates/pkger/cmd/pkger
 npm install
 ```
 
@@ -105,11 +104,6 @@ make build
 ### Build static assets
 ```
 npm run build
-```
-
-### bundle up static assets
-```
-pkger
 ```
 
 ### Build for current OS
